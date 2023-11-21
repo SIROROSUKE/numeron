@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>候補と数字の出現数表示</title>
+  <style>
+    .bar-graph {
+      margin: 5px 0;
+      padding: 5px;
+      border: 1px solid #ddd;
+    }
+
+    .bar {
+      display: inline-block;
+      height: 20px;
+      background-color: #3498db;
+      margin-right: 1px;
+    }
+  </style>
+  <script>
+    let allCandidates = []; // すべての組み合わせに対する候補をまとめる
+
+    function generateCandidates(currentGuess, eatCount, biteCount, candidateList) {
+      const newCandidates = [];
+
+      for (const candidate of candidateList) {
+        const currentEatCount = countEats(candidate, currentGuess);
+        const currentBiteCount = countBites(candidate, currentGuess);
+
+        if (currentEatCount === eatCount && currentBiteCount === biteCount) {
+          newCandidates.push(candidate);
+        }
+      }
+
+      return newCandidates;
+    }
+
+    function countEats(candidate, guess) {
+      let count = 0;
+      for (let i = 0; i < candidate.length; i++) {
+        if (candidate[i] === guess[i]) {
+          count++;
+        }
+      }
+      return count;
+    }
+
+    function countBites(candidate, guess) {
+      let count = 0;
+      for (let i = 0; i < candidate.length; i++) {
+        if (candidate.includes(guess[i]) && candidate[i] !== guess[i]) {
+          count++;
+        }
+      }
+      return count;
+    }
+
+    function countDigitOccurrences(candidateList, digitPosition) {
+      const digitOccurrences = Array(10).fill(0);
+
+      for (const candidate of candidateList) {
+        const digit = parseInt(candidate.charAt(digitPosition));
+        digitOccurrences[digit]++;
+      }
+
+      return digitOccurrences;
+    }
+
+    function displayCandidates() {
+      let outputHTML = "<h2>最終的な結果</h2>";
+
+      // 初期化
+      allCandidates = [];
+
+      for (let i = 1; i <= 10; i++) {
+        const currentGuess = document.getElementById(`guess${i}`).value;
+        const eatCount = parseInt(document.getElementById(`eat${i}`).value) || 0;
+        const biteCount = parseInt(document.getElementById(`bite${i}`).value) || 0;
+
+        // ここで候補を生成
+        const candidateList = generateCandidates(currentGuess, eatCount, biteCount, generatePossibleNumbers());
+
+        // すべての組み合わせに対する候補を保存
+        allCandidates.push(candidateList);
+      }
+
+      // 最終的な結果の表示
+      outputHTML += "<p>最終的な結果:</p>";
+      const finalCandidates = getIntersection(allCandidates);
+      outputHTML += `候補: ${finalCandidates.join(", ")}<br>`;
+
+      const outputElement = document.getElementById("output");
+      outputElement.innerHTML = outputHTML;
+    }
+
+    function getIntersection(arrays) {
+      if (arrays.length === 0) return [];
+      return arrays.reduce((accumulator, currentArray) => accumulator.filter(value => currentArray.includes(value)));
+    }
+
+    function generatePossibleNumbers() {
+      const possibleNumbers = [];
+      for (let i = 1000; i <= 9999; i++) {
+        const numberString = i.toString();
+        if (hasUniqueDigits(numberString)) {
+          possibleNumbers.push(numberString);
+        }
+      }
+      return possibleNumbers;
+    }
+
+    function hasUniqueDigits(number) {
+      return new Set(number).size === number.length;
+    }
+  </script>
+</head>
+<body>
+  <h1>候補と数字の出現数表示</h1>
+  <div id="guessInputs"></div>
+  <button onclick="displayCandidates()">最終的な結果を表示</button>
+  <div id="output"></div>
+
+  <script>
+    // ページ読み込み時に仮の数字列とイート・バイトの数の入力フォームを生成
+    function addGuessInputs() {
+      const guessInputsElement = document.getElementById("guessInputs");
+      for (let i = 1; i <= 10; i++) {
+        guessInputsElement.innerHTML += `
+          <label for="guess${i}">仮の数字列${i}:</label>
+          <input type="text" id="guess${i}" maxlength="4">
+          <label for="eat${i}">イートの数${i}:</label>
+          <input type="number" id="eat${i}" min="0" max="4">
+          <label for="bite${i}">バイトの数${i}:</label>
+          <input type="number" id="bite${i}" min="0" max="4"><br>
+        `;
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", addGuessInputs);
+  </script>
+</body>
+</html>
