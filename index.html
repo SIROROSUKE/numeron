@@ -71,11 +71,48 @@
     function suggestNextGuess(currentGuess, eatCount, biteCount, candidateList) {
       const nextCandidates = generateCandidates(currentGuess, eatCount, biteCount, candidateList);
 
-      const filteredCandidates = getIntersection([nextCandidates, getIntersection(allCandidates)]);
-
-      const nextGuess = filteredCandidates[0];
+      // 新たな予想を提案
+      const nextGuess = findBestGuess(nextCandidates);
 
       return nextGuess || "No valid guess found";
+    }
+
+    function findBestGuess(candidateList) {
+      // 各数字位置において、出現回数が最も多い数字を選ぶ
+      const digitFrequency = Array(3).fill(0);
+
+      for (const candidate of candidateList) {
+        for (let i = 0; i < candidate.length; i++) {
+          const digit = parseInt(candidate.charAt(i));
+          digitFrequency[i]++;
+        }
+      }
+
+      // 最も出現回数が多い数字を選ぶ
+      let bestGuess = "";
+      for (let i = 0; i < digitFrequency.length; i++) {
+        const mostFrequentDigit = findMostFrequentDigit(i, candidateList);
+        bestGuess += mostFrequentDigit;
+      }
+
+      return bestGuess;
+    }
+
+    function findMostFrequentDigit(position, candidateList) {
+      const digitOccurrences = countDigitOccurrences(candidateList, position);
+
+      // 出現回数が最も多い数字を求める
+      let mostFrequentDigit = 0;
+      let maxOccurrences = 0;
+
+      for (let i = 0; i < digitOccurrences.length; i++) {
+        if (digitOccurrences[i] > maxOccurrences) {
+          mostFrequentDigit = i;
+          maxOccurrences = digitOccurrences[i];
+        }
+      }
+
+      return mostFrequentDigit.toString();
     }
 
     function displayCandidates() {
