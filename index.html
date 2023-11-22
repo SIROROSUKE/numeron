@@ -78,13 +78,13 @@
     }
 
     function findBestGuess(currentGuess, candidateList) {
-      const possibleDigits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+      const possibleDigits = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
       const remainingDigits = possibleDigits.filter(digit => !currentGuess.includes(digit));
 
       let bestGuess = currentGuess;
 
       for (let i = 0; i < currentGuess.length; i++) {
-        // まだ推測されていない数字の中で最も絞り込れる数字を見つける
+        // まだ推測されていない数字の中で最も絞り込める数字を見つける
         const bestDigit = findBestDigit(currentGuess, i, remainingDigits, candidateList);
         bestGuess = setCharAt(bestGuess, i, bestDigit);
       }
