@@ -19,8 +19,8 @@
     }
   </style>
   <script>
-    let allCandidates = []; // すべての組み合わせに対する候補をまとめる
-    let currentGuess, eatCount, biteCount; // currentGuess, eatCount, biteCount を関数全体で利用可能にする
+    let allCandidates = [];
+    let currentGuess, eatCount, biteCount;
 
     function generateCandidates(currentGuess, eatCount, biteCount, candidateList) {
       const newCandidates = [];
@@ -86,7 +86,7 @@
       allCandidates = [];
 
       for (let i = 1; i <= 10; i++) {
-        currentGuess = document.getElementById(`guess${i}`).value;
+        currentGuess = document.getElementById(`guess${i}`).value || "";
         eatCount = parseInt(document.getElementById(`eat${i}`).value) || 0;
         biteCount = parseInt(document.getElementById(`bite${i}`).value) || 0;
 
