@@ -80,6 +80,8 @@
     }
 
     function displayCandidates() {
+      console.log("Display Candidates function called"); // 関数が呼ばれたことを確認
+
       let outputHTML = "<h2>最終的な結果</h2>";
 
       // 初期化
@@ -89,6 +91,9 @@
         const currentGuess = document.getElementById(`guess${i}`).value;
         const eatCount = parseInt(document.getElementById(`eat${i}`).value) || 0;
         const biteCount = parseInt(document.getElementById(`bite${i}`).value) || 0;
+
+        // ここでログを出力
+        console.log(`Current Guess: ${currentGuess}, Eat: ${eatCount}, Bite: ${biteCount}`);
 
         // ここで候補を生成
         const candidateList = generateCandidates(currentGuess, eatCount, biteCount, generatePossibleNumbers());
