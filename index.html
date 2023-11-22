@@ -72,47 +72,50 @@
       const nextCandidates = generateCandidates(currentGuess, eatCount, biteCount, candidateList);
 
       // 新たな予想を提案
-      const nextGuess = findBestGuess(nextCandidates);
+      const nextGuess = findBestGuess(currentGuess, nextCandidates);
 
       return nextGuess || "No valid guess found";
     }
 
-    function findBestGuess(candidateList) {
-      // 各数字位置において、出現回数が最も多い数字を選ぶ
-      const digitFrequency = Array(3).fill(0);
+    function findBestGuess(currentGuess, candidateList) {
+      const possibleDigits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+      const remainingDigits = possibleDigits.filter(digit => !currentGuess.includes(digit));
 
-      for (const candidate of candidateList) {
-        for (let i = 0; i < candidate.length; i++) {
-          const digit = parseInt(candidate.charAt(i));
-          digitFrequency[i]++;
-        }
-      }
+      let bestGuess = currentGuess;
 
-      // 最も出現回数が多い数字を選ぶ
-      let bestGuess = "";
-      for (let i = 0; i < digitFrequency.length; i++) {
-        const mostFrequentDigit = findMostFrequentDigit(i, candidateList);
-        bestGuess += mostFrequentDigit;
+      for (let i = 0; i < currentGuess.length; i++) {
+        // まだ推測されていない数字の中で最も絞り込れる数字を見つける
+        const bestDigit = findBestDigit(currentGuess, i, remainingDigits, candidateList);
+        bestGuess = setCharAt(bestGuess, i, bestDigit);
       }
 
       return bestGuess;
     }
 
-    function findMostFrequentDigit(position, candidateList) {
-      const digitOccurrences = countDigitOccurrences(candidateList, position);
+    function findBestDigit(currentGuess, position, remainingDigits, candidateList) {
+      let bestDigit = remainingDigits[0];
+      let minEliminatedCount = Infinity;
 
-      // 出現回数が最も多い数字を求める
-      let mostFrequentDigit = 0;
-      let maxOccurrences = 0;
+      for (const digit of remainingDigits) {
+        const modifiedGuess = setCharAt(currentGuess, position, digit);
+        const eliminatedCount = countEliminatedCandidates(modifiedGuess, position, candidateList);
 
-      for (let i = 0; i < digitOccurrences.length; i++) {
-        if (digitOccurrences[i] > maxOccurrences) {
-          mostFrequentDigit = i;
-          maxOccurrences = digitOccurrences[i];
+        if (eliminatedCount < minEliminatedCount) {
+          minEliminatedCount = eliminatedCount;
+          bestDigit = digit;
         }
       }
 
-      return mostFrequentDigit.toString();
+      return bestDigit;
+    }
+
+    function setCharAt(str, index, char) {
+      return str.substring(0, index) + char + str.substring(index + 1);
+    }
+
+    function countEliminatedCandidates(guess, position, candidateList) {
+      const eliminatedCandidates = generateCandidates(guess, 0, 0, candidateList);
+      return eliminatedCandidates.length;
     }
 
     function displayCandidates() {
