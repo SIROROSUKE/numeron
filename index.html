@@ -142,6 +142,7 @@
       outputHTML += `候補: ${finalCandidates.join(", ")}<br>`;
 
       const nextGuess = suggestNextGuess(currentGuess, eatCount, biteCount, finalCandidates);
+      console.log("Next Guess:", nextGuess);
       outputHTML += `次の予想: ${nextGuess}<br>`;
 
       const outputElement = document.getElementById("output");
@@ -167,15 +168,7 @@
     function hasUniqueDigits(number) {
       return new Set(number).size === number.length;
     }
-  </script>
-</head>
-<body>
-  <h1>候補と数字の出現数表示</h1>
-  <div id="guessInputs"></div>
-  <button onclick="displayCandidates()">最終的な結果を表示</button>
-  <div id="output"></div>
 
-  <script>
     function addGuessInputs() {
       const guessInputsElement = document.getElementById("guessInputs");
       for (let i = 1; i <= 10; i++) {
@@ -192,5 +185,11 @@
 
     window.addEventListener("DOMContentLoaded", addGuessInputs);
   </script>
+</head>
+<body>
+  <h1>候補と数字の出現数表示</h1>
+  <div id="guessInputs"></div>
+  <button onclick="displayCandidates()">最終的な結果を表示</button>
+  <div id="output"></div>
 </body>
 </html>
