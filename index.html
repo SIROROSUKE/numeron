@@ -20,6 +20,7 @@
   </style>
   <script>
     let allCandidates = []; // すべての組み合わせに対する候補をまとめる
+    let currentGuess, eatCount, biteCount; // currentGuess, eatCount, biteCount を関数全体で利用可能にする
 
     function generateCandidates(currentGuess, eatCount, biteCount, candidateList) {
       const newCandidates = [];
@@ -70,44 +71,36 @@
     function suggestNextGuess(currentGuess, eatCount, biteCount, candidateList) {
       const nextCandidates = generateCandidates(currentGuess, eatCount, biteCount, candidateList);
 
-      // Get the intersection of the new candidates with the previous candidates
       const filteredCandidates = getIntersection([nextCandidates, getIntersection(allCandidates)]);
 
-      // Choose the first candidate from the filtered list as the next guess
       const nextGuess = filteredCandidates[0];
 
-      return nextGuess || "No valid guess found"; // Return the next guess or a message if no valid guess is found
+      return nextGuess || "No valid guess found";
     }
 
     function displayCandidates() {
-      console.log("Display Candidates function called"); // 関数が呼ばれたことを確認
+      console.log("Display Candidates function called");
 
       let outputHTML = "<h2>最終的な結果</h2>";
 
-      // 初期化
       allCandidates = [];
 
       for (let i = 1; i <= 10; i++) {
-        const currentGuess = document.getElementById(`guess${i}`).value;
-        const eatCount = parseInt(document.getElementById(`eat${i}`).value) || 0;
-        const biteCount = parseInt(document.getElementById(`bite${i}`).value) || 0;
+        currentGuess = document.getElementById(`guess${i}`).value;
+        eatCount = parseInt(document.getElementById(`eat${i}`).value) || 0;
+        biteCount = parseInt(document.getElementById(`bite${i}`).value) || 0;
 
-        // ここでログを出力
         console.log(`Current Guess: ${currentGuess}, Eat: ${eatCount}, Bite: ${biteCount}`);
 
-        // ここで候補を生成
         const candidateList = generateCandidates(currentGuess, eatCount, biteCount, generatePossibleNumbers());
-
-        // すべての組み合わせに対する候補を保存
         allCandidates.push(candidateList);
       }
 
-      // 最終的な結果の表示
+      console.log("Final Candidates:", allCandidates);
       outputHTML += "<p>最終的な結果:</p>";
       const finalCandidates = getIntersection(allCandidates);
       outputHTML += `候補: ${finalCandidates.join(", ")}<br>`;
 
-      // Suggest the next guess based on the feedback
       const nextGuess = suggestNextGuess(currentGuess, eatCount, biteCount, finalCandidates);
       outputHTML += `次の予想: ${nextGuess}<br>`;
 
@@ -143,7 +136,6 @@
   <div id="output"></div>
 
   <script>
-    // ページ読み込み時に仮の数字列とイート・バイトの数の入力フォームを生成
     function addGuessInputs() {
       const guessInputsElement = document.getElementById("guessInputs");
       for (let i = 1; i <= 10; i++) {
