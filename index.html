@@ -81,8 +81,8 @@
       let bestScore = -Infinity;
       let bestGuess = null;
 
-      for (const guess of candidateList) {
-        const score = minimax(guess, generateCandidates(guess, 0, 0, candidateList), 3, false);
+      for (const guess of generatePossibleNumbers()) {
+        const score = minimax(guess, candidateList, 3, false);
         if (score > bestScore) {
           bestScore = score;
           bestGuess = guess;
@@ -99,15 +99,15 @@
 
       if (isMaximizingPlayer) {
         let bestScore = -Infinity;
-        for (const guess of candidateList) {
-          const score = minimax(guess, generateCandidates(guess, 0, 0, candidateList), depth - 1, false);
+        for (const guess of generatePossibleNumbers()) {
+          const score = minimax(guess, candidateList, depth - 1, false);
           bestScore = Math.max(bestScore, score);
         }
         return bestScore;
       } else {
         let bestScore = Infinity;
-        for (const guess of candidateList) {
-          const score = minimax(guess, generateCandidates(guess, 0, 0, candidateList), depth - 1, true);
+        for (const guess of generatePossibleNumbers()) {
+          const score = minimax(guess, candidateList, depth - 1, true);
           bestScore = Math.min(bestScore, score);
         }
         return bestScore;
