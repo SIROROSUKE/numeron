@@ -78,35 +78,45 @@
     }
 
     function findBestGuess(currentGuess, candidateList) {
-      const possibleDigits = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
-      const remainingDigits = possibleDigits.filter(digit => !currentGuess.includes(digit));
+      let bestScore = -Infinity;
+      let bestGuess = null;
 
-      let bestGuess = currentGuess;
-
-      for (let i = 0; i < currentGuess.length; i++) {
-        // まだ推測されていない数字の中で最も絞り込める数字を見つける
-        const bestDigit = findBestDigit(currentGuess, i, remainingDigits, candidateList);
-        bestGuess = setCharAt(bestGuess, i, bestDigit);
+      for (const guess of candidateList) {
+        const score = minimax(guess, generateCandidates(guess, 0, 0, candidateList), 3, false);
+        if (score > bestScore) {
+          bestScore = score;
+          bestGuess = guess;
+        }
       }
 
       return bestGuess;
     }
 
-    function findBestDigit(currentGuess, position, remainingDigits, candidateList) {
-      let bestDigit = remainingDigits[0];
-      let minEliminatedCount = Infinity;
-
-      for (const digit of remainingDigits) {
-        const modifiedGuess = setCharAt(currentGuess, position, digit);
-        const eliminatedCount = countEliminatedCandidates(modifiedGuess, position, candidateList);
-
-        if (eliminatedCount < minEliminatedCount) {
-          minEliminatedCount = eliminatedCount;
-          bestDigit = digit;
-        }
+    function minimax(currentGuess, candidateList, depth, isMaximizingPlayer) {
+      if (depth === 0 || candidateList.length === 1) {
+        return evaluateGuess(currentGuess, candidateList);
       }
 
-      return bestDigit;
+      if (isMaximizingPlayer) {
+        let bestScore = -Infinity;
+        for (const guess of candidateList) {
+          const score = minimax(guess, generateCandidates(guess, 0, 0, candidateList), depth - 1, false);
+          bestScore = Math.max(bestScore, score);
+        }
+        return bestScore;
+      } else {
+        let bestScore = Infinity;
+        for (const guess of candidateList) {
+          const score = minimax(guess, generateCandidates(guess, 0, 0, candidateList), depth - 1, true);
+          bestScore = Math.min(bestScore, score);
+        }
+        return bestScore;
+      }
+    }
+
+    function evaluateGuess(currentGuess, candidateList) {
+      // ここに適切な評価関数を追加する（例: 次の予想が絞り込まれる可能性が高いかどうか）
+      return candidateList.length;
     }
 
     function setCharAt(str, index, char) {
